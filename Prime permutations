@@ -1,0 +1,64 @@
+import java.util.*;
+
+public class PrimePermutations {
+    public static void main(String[] args) {
+        int lowerBound = 1000;
+        int upperBound = 9999;
+        
+        List<Integer> primes = generatePrimes(lowerBound, upperBound);
+        Map<String, List<Integer>> primeGroups = groupPrimesByPermutation(primes);
+
+        for (Map.Entry<String, List<Integer>> entry : primeGroups.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                System.out.println("Primes that are permutations of each other: " + entry.getValue());
+            }
+        }
+    }
+
+    // Generate prime numbers within a range
+    private static List<Integer> generatePrimes(int lowerBound, int upperBound) {
+        List<Integer> primes = new ArrayList<>();
+        for (int i = lowerBound; i <= upperBound; i++) {
+            if (isPrime(i)) {
+                primes.add(i);
+            }
+        }
+        return primes;
+    }
+
+    // Check if a number is prime
+    private static boolean isPrime(int number) {
+        if (number <= 1) {
+            return false;
+        }
+        if (number == 2) {
+            return true;
+        }
+        if (number % 2 == 0) {
+            return false;
+        }
+        for (int i = 3; i <= Math.sqrt(number); i += 2) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Group primes by their digit permutations
+    private static Map<String, List<Integer>> groupPrimesByPermutation(List<Integer> primes) {
+        Map<String, List<Integer>> primeGroups = new HashMap<>();
+        for (int prime : primes) {
+            String sortedDigits = sortDigits(prime);
+            primeGroups.computeIfAbsent(sortedDigits, k -> new ArrayList<>()).add(prime);
+        }
+        return primeGroups;
+    }
+
+    // Sort the digits of a number to create a unique key for permutations
+    private static String sortDigits(int number) {
+        char[] digits = String.valueOf(number).toCharArray();
+        Arrays.sort(digits);
+        return new String(digits);
+    }
+}
